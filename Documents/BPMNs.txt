@@ -1,0 +1,87 @@
+The "operate air bridge" subprocess begins, after the intermediate catch event "Engines completely shut down", with the step "Connect air bridge to aircraft". Once completed, a notification is sent to the designated passenger lane, indicating the event "Air bridge connected".Next, the task "Connect ground power" is performed to establish the aircraft's ground power connection. After this step, the process waits for the event "Boarding completed" to occur.
+Once boarding is completed, the step "Air bridge disconnects from aircraft" is executed, detaching the air bridge from the aircraft. Finally, the process ends with the event "Air bridge disconnected", marking the completion of this subprocess.
+
+;
+
+The "Handle baggage loader" subprocess begins after the intermediate catch event "Engines completely shut down".
+Next, the task "Baggage loader approaches Aircraft" is performed. Once completed, an intermediate throw event signals "baggage loader connected".
+The process then waits for the intermediate catch event "baggage complete" to occur.
+Once the baggage is complete, the task "Baggage loader disconnects from aircraft" is executed.
+Finally, the process ends with the end event "Baggage loader disconnected", marking the completion of this subprocess.
+
+;
+
+The process begins with the intermediate catch event "Engines completely shut down".
+Next, the "Handle baggage" subprocess is initiated. This subprocess starts with the task "baggage carts approach aircraft".
+Once the baggage carts are in position, the process waits for the intermediate catch event "baggage loader connected".
+After the baggage loader is connected, the task "Unload baggage" is performed.
+Following the unloading, the task "Load new baggage" is executed.
+The subprocess concludes with the end event "baggage completed".
+
+;
+
+The process begins with the intermediate catch event "Engines completely shut down".
+Next, the "Cabin Preparation" subprocess is initiated. This subprocess starts with the intermediate catch event "deboarding complete".
+Once deboarding is complete, the task "Cabin Waste disposal" is performed.
+Following waste disposal, the task "Cabin cleaning" is executed.
+After cleaning the cabin, the task "Lavatory cleaning" is performed.
+Next, the task "Cabin Inventory check" is carried out.
+Following the inventory check, the task "Cabin Safety inspection" is conducted.
+The subprocess concludes with the end event "Cabin is ready", signaling that the cabin preparation is complete.
+
+;
+
+The process begins with the intermediate catch event "Engines completely shut down".
+Next, the "Handle catering" subprocess is initiated. This subprocess starts with the task "Catering truck approaches aircraft".
+Once the catering truck is in position, the task "Unload catering" is performed.
+Following the unloading, the task "Load catering" is executed.
+After loading the new catering, the task "Catering truck departs from aircraft" is carried out.
+The subprocess concludes with the end event "Catering completed", signaling that the catering handling is complete.
+
+;
+
+The process begins with the start event "Air bridge connected".
+Next, the "Passengers deboarding" subprocess is initiated. This subprocess starts with the task "Passengers Disembark from aircraft".
+Once the passengers have disembarked, the task "Passengers Continue airport journey" is performed.
+The subprocess concludes with the end event "deboarding complete".
+Following the deboarding process, the "Passengers boarding" subprocess begins. This subprocess starts with the intermediate catch event "Cabin is ready".
+Once the cabin is ready, the task "Passengers board aircraft" is executed.
+The subprocess concludes with the end event "boarding completed".
+Finally, the main process ends with the end event "boarding complete", marking the completion of the passenger handling process.
+
+;
+
+The process begins with the intermediate catch event "Engines completely shut down".
+Next, the "Handle Refueling" subprocess is initiated. This subprocess starts with the task "Fuel truck approaches aircraft".
+Once the fuel truck is in position, the process waits for the intermediate catch event "deboarding complete".
+After deboarding is complete, the task "Refuel aircraft" is performed.
+The subprocess concludes with the end event "Aircraft refueled", signaling that the refueling is complete.
+
+;
+
+The process begins with the start event "Aircraft Arrived".
+Next, the task "aircraft taxi-in" is performed.
+Following the taxi-in, the task "Park aircraft and shut down engines" is executed.
+Once the engines are completely shut down, the process reaches the intermediate catch event "Engines completely shut down".
+The process then splits into multiple parallel paths through a parallel gateway:
+Baggage Handling Path:
+The task "Handle baggage" is performed.
+Simultaneously, the task "handle baggage loader" is executed.
+The task "Handle Refueling" is performed.
+Cabin Preparation Path:
+The task "Cabin Preparation" is performed.
+Catering Path:
+The task "Handle Catering" is performed.
+Air Bridge Operation Path:
+The task "Operate air bridge" is performed.
+All paths converge at another parallel gateway, leading to the intermediate catch event "deboarding complete".
+After deboarding is complete, the process waits for the intermediate catch event "baggage complete".
+Once baggage handling is complete, the process waits for the intermediate catch event "baggage loader disconnected".
+Following the disconnection of the baggage loader, the process waits for the intermediate catch event "Cabin is ready".
+After the cabin is ready, the process waits for the intermediate catch event "boarding completed".
+Once boarding is completed, the task "Aircraft safety check" is performed.
+Following the safety check, the process waits for the intermediate catch event "Ready for Pushback".
+Next, the task "Crew briefing" is performed.
+After the crew briefing, the task "Gate departure clearance" is executed.
+Following gate departure clearance, the task "Takeoff clearance" is performed.
+Finally, the process ends with the end event "Aircraft departed", marking the completion of the aircraft handling process.
